@@ -7,8 +7,8 @@ def filtering(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # HSVによる上限、下限の設定　 ([Hue, Saturation, Value])
-    hsvLower = np.array([0, 0, 0])  # 下限
-    hsvUpper = np.array([150, 150, 150])  # 上限
+    hsvLower = np.array([6, 0, 0])  # 下限
+    hsvUpper = np.array([23, 150, 155])  # 上限
 
     # HSVからマスクを作成
     hsv_mask = cv2.inRange(hsv, hsvLower, hsvUpper)
@@ -19,7 +19,7 @@ def filtering(frame):
 
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     # 実行
     while True:
