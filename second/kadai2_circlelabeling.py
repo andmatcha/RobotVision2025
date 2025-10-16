@@ -3,6 +3,9 @@ import cv2
 import numpy as np
 
 
+center_history = {"blue": [], "green": [], "pink": []}
+
+
 # テキスト表示を追加する関数
 def add_text(frame, text, position):
     cv2.putText(
@@ -15,6 +18,23 @@ def add_text(frame, text, position):
         thickness=2,
         lineType=cv2.LINE_AA,
     )
+
+
+def track_center(frame, x, y, color):
+    # 色ごとの履歴リストに中心座標を追加
+    center_history[color].append((x, y))
+    # 履歴が30個を超えたら古いものを削除
+    if len(center_history[color]) > 20:
+        center_history[color].pop(0)
+    # 履歴に基づいて軌跡を描画
+    for i in range(1, len(center_history[color])):
+        cv2.line(
+            frame,
+            center_history[color][i - 1],
+            center_history[color][i],
+            (255, 255, 0),
+            2,
+        )
 
 
 def circle_labeling(frame, color, min_area=1000, max_area=250000, min_circularity=0.8):
@@ -81,6 +101,7 @@ def circle_labeling(frame, color, min_area=1000, max_area=250000, min_circularit
 
         center = (int(circle_x), int(circle_y))
         radius = int(radius)
+        track_center(frame, center[0], center[1], color)
 
         # フレームに円を描画
         cv2.circle(frame, center, radius, (0, 0, 255), 3)
