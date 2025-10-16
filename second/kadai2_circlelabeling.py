@@ -50,6 +50,42 @@ def circle_labeling(frame, color):
             cv2.circle(frame, center, radius, (0, 255, 0), 2)
             # 中心点を描画（塗りつぶし）
             cv2.circle(frame, center, 5, (0, 0, 255), -1)
+
+            # テキスト表示位置（円の右下）
+            text_x = center[0] + int(radius * 0.7)
+            text_y = center[1] + int(radius * 0.7)
+
+            # テキスト情報を表示
+            cv2.putText(
+                frame,
+                text=f"Center X: {center[0]}",
+                org=(text_x, text_y),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.5,
+                color=(0, 0, 255),
+                thickness=1,
+                lineType=cv2.LINE_AA,
+            )
+            cv2.putText(
+                frame,
+                text=f"Center Y: {center[1]}",
+                org=(text_x, text_y + 20),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.5,
+                color=(0, 0, 255),
+                thickness=1,
+                lineType=cv2.LINE_AA,
+            )
+            cv2.putText(
+                frame,
+                text=f"Radius: {radius}",
+                org=(text_x, text_y + 40),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.5,
+                color=(0, 0, 255),
+                thickness=1,
+                lineType=cv2.LINE_AA,
+            )
     else:
         largest_label = None
 
