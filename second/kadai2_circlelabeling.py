@@ -35,7 +35,6 @@ def circle_labeling(frame, color):
     hsv_mask = cv2.inRange(hsv, HSVRange[color]["lower"], HSVRange[color]["upper"])
     # ノイズ成分を除去
     blur_mask = cv2.medianBlur(hsv_mask, ksize=3)
-    # cv2.imshow(f"{color}_mask", blur_mask)  # デバッグ用
     # ラベリング処理
     nlabels, labels, stats, centroids = cv2.connectedComponentsWithStats(blur_mask)
 
@@ -46,7 +45,7 @@ def circle_labeling(frame, color):
         # 最大面積のラベル番号（+1はラベル0を除外したため）
         largest_label = np.argmax(areas) + 1
 
-        # 最大ラベルのマスクを作成
+        # 最大ラベルのマスクを作成 最大のラベルを取り出し->False or True配列->0 or 1配列->0 or 255配列
         largest_mask = (labels == largest_label).astype(np.uint8) * 255
 
         # 輪郭を検出
