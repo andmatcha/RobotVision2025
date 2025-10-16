@@ -3,6 +3,20 @@ import cv2
 import numpy as np
 
 
+# テキスト表示を追加する関数
+def add_text(frame, text, position):
+    cv2.putText(
+        frame,
+        text=text,
+        org=position,
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=0.8,
+        color=(0, 255, 255),
+        thickness=2,
+        lineType=cv2.LINE_AA,
+    )
+
+
 def circle_labeling(frame, color):
     # 色の範囲
     # HSVRange["blue"]["lower"]で値を取り出せる
@@ -47,45 +61,18 @@ def circle_labeling(frame, color):
             radius = int(radius)
 
             # フレームに円を描画
-            cv2.circle(frame, center, radius, (0, 255, 0), 2)
+            cv2.circle(frame, center, radius, (0, 0, 255), 3)
             # 中心点を描画（塗りつぶし）
-            cv2.circle(frame, center, 5, (0, 0, 255), -1)
+            cv2.circle(frame, center, 10, (255, 200, 0), -1)
 
             # テキスト表示位置（円の右下）
-            text_x = center[0] + int(radius * 0.7)
-            text_y = center[1] + int(radius * 0.7)
+            text_x = center[0] + int(radius * 0.8)
+            text_y = center[1] + int(radius * 0.8)
 
             # テキスト情報を表示
-            cv2.putText(
-                frame,
-                text=f"Center X: {center[0]}",
-                org=(text_x, text_y),
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=0.5,
-                color=(0, 0, 255),
-                thickness=1,
-                lineType=cv2.LINE_AA,
-            )
-            cv2.putText(
-                frame,
-                text=f"Center Y: {center[1]}",
-                org=(text_x, text_y + 20),
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=0.5,
-                color=(0, 0, 255),
-                thickness=1,
-                lineType=cv2.LINE_AA,
-            )
-            cv2.putText(
-                frame,
-                text=f"Radius: {radius}",
-                org=(text_x, text_y + 40),
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=0.5,
-                color=(0, 0, 255),
-                thickness=1,
-                lineType=cv2.LINE_AA,
-            )
+            add_text(frame, f"Center X: {center[0]}", (text_x, text_y))
+            add_text(frame, f"Center Y: {center[1]}", (text_x, text_y + 30))
+            add_text(frame, f"Radius: {radius}", (text_x, text_y + 60))
     else:
         largest_label = None
 
