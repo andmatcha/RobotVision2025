@@ -17,7 +17,13 @@ def add_text(frame, text, position):
     )
 
 
-def circle_labeling(frame, color):
+def circle_labeling(frame, color, min_area=1000, max_area=250000, min_circularity=0.8):
+    # frame: 入力画像
+    # color: 検出する色 blue/green/pink
+    # min_area: 検出対象の最小面積
+    # max_area: 検出対象の最大面積
+    # min_circularity: 検出対象の最小円形度（0-1の範囲、1が完全な円）
+
     # 色の範囲
     # HSVRange["blue"]["lower"]で値を取り出せる
     HSVRange = {
@@ -38,43 +44,59 @@ def circle_labeling(frame, color):
     # ラベリング処理
     nlabels, labels, stats, centroids = cv2.connectedComponentsWithStats(blur_mask)
 
-    # 面積が最も大きいラベルを取得（背景ラベル0を除く）
-    if nlabels > 1:
-        # ラベル1以降の面積を取得
-        areas = stats[1:, cv2.CC_STAT_AREA]
-        # 最大面積のラベル番号（+1はラベル0を除外したため）
-        largest_label = np.argmax(areas) + 1
+    # すべてのラベルをチェック（背景ラベル0を除く）
+    if nlabels <= 1:
+        return frame
 
-        # 最大ラベルのマスクを作成 最大のラベルを取り出し->False or True配列->0 or 1配列->0 or 255配列
-        largest_mask = (labels == largest_label).astype(np.uint8) * 255
+    for label in range(1, nlabels):
+        # ラベルの面積を取得
+        area = stats[label, cv2.CC_STAT_AREA]
+
+        # 面積のフィルタリング
+        if area < min_area or area > max_area:
+            continue
+
+        # 該当ラベルのマスクを作成
+        label_mask = (labels == label).astype(np.uint8) * 255
 
         # 輪郭を検出
         contours, _ = cv2.findContours(
-            largest_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+            label_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
 
-        if contours:
-            # 最小外接円を取得
-            (circle_x, circle_y), radius = cv2.minEnclosingCircle(contours[0])
-            center = (int(circle_x), int(circle_y))
-            radius = int(radius)
+        if not contours:
+            continue
 
-            # フレームに円を描画
-            cv2.circle(frame, center, radius, (0, 0, 255), 3)
-            # 中心点を描画（塗りつぶし）
-            cv2.circle(frame, center, 10, (255, 200, 0), -1)
+        # 最小外接円を取得
+        (circle_x, circle_y), radius = cv2.minEnclosingCircle(contours[0])
 
-            # テキスト表示位置（円の右下）
-            text_x = center[0] + int(radius * 0.8)
-            text_y = center[1] + int(radius * 0.8)
+        # 円形度を計算: 実面積 / 外接円の面積
+        # 完全な円なら1.0、細長い形状なら小さな値になる
+        circle_area = np.pi * (radius**2)
+        circularity = area / circle_area if circle_area > 0 else 0
 
-            # テキスト情報を表示
-            add_text(frame, f"Color: {color}", (text_x, text_y))
-            add_text(frame, f"Center X: {center[0]}", (text_x, text_y + 30))
-            add_text(frame, f"Center Y: {center[1]}", (text_x, text_y + 60))
-            add_text(frame, f"Radius: {radius}", (text_x, text_y + 90))
-    else:
-        largest_label = None
+        # 円形度のフィルタリング
+        if circularity < min_circularity:
+            continue
+
+        center = (int(circle_x), int(circle_y))
+        radius = int(radius)
+
+        # フレームに円を描画
+        cv2.circle(frame, center, radius, (0, 0, 255), 3)
+        # 中心点を描画（塗りつぶし）
+        cv2.circle(frame, center, 10, (255, 200, 0), -1)
+
+        # テキスト表示位置（円の右下）
+        text_x = center[0] + int(radius * 0.8)
+        text_y = center[1] + int(radius * 0.8)
+
+        # テキスト情報を表示（円形度も追加）
+        add_text(frame, f"Color: {color}", (text_x, text_y))
+        add_text(frame, f"Center X: {center[0]}", (text_x, text_y + 30))
+        add_text(frame, f"Center Y: {center[1]}", (text_x, text_y + 60))
+        add_text(frame, f"Radius: {radius}", (text_x, text_y + 90))
+        add_text(frame, f"Circularity: {circularity:.2f}", (text_x, text_y + 120))
 
     return frame
 
