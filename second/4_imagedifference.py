@@ -4,7 +4,7 @@ import numpy as np
 
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     # スクショしたかどうかを保存する変数 (まだ撮っていないのでFalse)
     screenshot = False
     # スクショを保存する変数

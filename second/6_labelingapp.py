@@ -99,7 +99,7 @@ def labeling(blur_mask, ball_img, stadium_img):
 
 
 def main():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     # アプリ用のスタジアム、ボール画像を読みこみ
     ret, frame = cap.read()

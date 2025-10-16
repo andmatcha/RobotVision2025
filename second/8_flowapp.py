@@ -121,7 +121,7 @@ def move_v2(frame, good_first, good_next, flow_mask):
 
 def main():
     # Webカメラ設定
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
 
     # アプリ用のスタジアム、ボール画像を読みこみ
