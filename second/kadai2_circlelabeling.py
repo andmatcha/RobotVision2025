@@ -70,9 +70,10 @@ def circle_labeling(frame, color):
             text_y = center[1] + int(radius * 0.8)
 
             # テキスト情報を表示
-            add_text(frame, f"Center X: {center[0]}", (text_x, text_y))
-            add_text(frame, f"Center Y: {center[1]}", (text_x, text_y + 30))
-            add_text(frame, f"Radius: {radius}", (text_x, text_y + 60))
+            add_text(frame, f"Color: {color}", (text_x, text_y))
+            add_text(frame, f"Center X: {center[0]}", (text_x, text_y + 30))
+            add_text(frame, f"Center Y: {center[1]}", (text_x, text_y + 60))
+            add_text(frame, f"Radius: {radius}", (text_x, text_y + 90))
     else:
         largest_label = None
 
