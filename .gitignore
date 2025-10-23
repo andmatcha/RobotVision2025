@@ -7,3 +7,6 @@ __pycache__
 *.pyc
 .ipynb_checkpoints
 *.npy
+
+/third/data/
+/third/mask_results/

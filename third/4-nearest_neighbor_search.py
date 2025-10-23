@@ -6,7 +6,7 @@ import numpy as np
 from skimage.feature import hog
 from sklearn.neighbors import NearestNeighbors
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # 特徴量の読み込み
 features = np.load("./data/features.npy")
